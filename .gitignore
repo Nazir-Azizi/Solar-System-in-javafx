@@ -1,0 +1,5 @@
+#java-related
+*.class
+
+#VS Code-specific files
+.vscode/
