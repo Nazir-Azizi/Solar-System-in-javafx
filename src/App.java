@@ -48,10 +48,10 @@ public class App extends Application{
 
         Circle[] palents = {mercury, venus, earth, mars, jupiter, saturn, uranus, neptune}; 
         PathTransition[] pathTransitions = new PathTransition[8];
-        int duration = 2500;
+        int duration = 2000;
         for (int i = 0; i < solarPath.length; ++i){
             createMotion(pathTransitions[i], palents[i], solarPath[i], duration);
-            duration += 300;
+            duration += 500;
         }
 
         root.getChildren().add(sun);
