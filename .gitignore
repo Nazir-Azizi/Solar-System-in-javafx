@@ -4,4 +4,6 @@
 #VS Code-specific files
 .vscode/
 
-.bin
+bin/
+*.class
+*.css
