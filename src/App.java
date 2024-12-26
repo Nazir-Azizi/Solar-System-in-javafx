@@ -1,9 +1,14 @@
+import java.io.File;
+
+import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -16,41 +21,50 @@ public class App extends Application{
     public void start(Stage stage) throws Exception {
         Pane root = new Pane();
 
-        Circle sun = new Circle(500, 350, 50);
-        sun.setFill(Color.YELLOW);
+        Circle[] stars = new Circle[50];
+        for(int i = 0; i < stars.length; ++i){
+            double x = (Math.random() * 1000);
+            double y = (Math.random() * 700);
+
+            stars[i] = new Circle(x, y, 1, Color.WHITE);
+        }
+        root.getChildren().addAll(stars);
+        addFadeMotionToStars(stars);
+
+        Circle sun = new Circle(500, 350, 50, new ImagePattern( new Image(
+            new File("resources/Sun.jpg").toURI().toString()),
+            0, 0,
+            1, 1,
+            true
+        ));
 
         Circle[] solarPath = new Circle[8];
         createPathForSolarSystem(solarPath);
+
+        Circle[] palents = {new Circle(7), new Circle(15), new Circle(15), new Circle(12)
+            , new Circle(17), new Circle(25), new Circle(20), new Circle(25)}; 
         
-        Circle mercury = new Circle(7);
-        mercury.setFill(Color.GRAY);
-
-        Circle venus = new Circle(15);
-        venus.setFill(Color.YELLOW);
-
-        Circle earth = new Circle(15);
-        earth.setFill(Color.BLUE);
-
-        Circle mars = new Circle(12);
-        mars.setFill(Color.RED);
-
-        Circle jupiter = new Circle(27);
-        jupiter.setFill(Color.ORANGE);
-
-        Circle saturn = new Circle(25);
-        saturn.setFill(Color.PALEGOLDENROD);
-
-        Circle uranus = new Circle(20);
-        uranus.setFill(Color.WHEAT);
-
-        Circle neptune = new Circle(25);
-        neptune.setFill(Color.BLUE);
-
-        Circle[] palents = {mercury, venus, earth, mars, jupiter, saturn, uranus, neptune}; 
-        PathTransition[] pathTransitions = new PathTransition[8];
-        int duration = 2000;
+        String[] location = new String[]{
+            "resources/Mercury.jpg",
+            "resources/Venus.jpg",
+            "resources/Earth.jpg",
+            "resources/Mars.jpg",
+            "resources/Jupiter.jpg",
+            "resources/Saturn.jpg",
+            "resources/Uranus.jpg",
+            "resources/Neptune.jpg"
+        };
+        for (int i = 0; i < palents.length; ++i){
+            palents[i].setFill(new ImagePattern( new Image(
+                new File(location[i]).toURI().toString()),
+                0, 0,
+                1, 1,
+                true
+            ));
+        }
+        int duration = 2500;
         for (int i = 0; i < solarPath.length; ++i){
-            createMotion(pathTransitions[i], palents[i], solarPath[i], duration);
+            createMotion(palents[i], solarPath[i], duration);
             duration += 500;
         }
 
@@ -64,18 +78,28 @@ public class App extends Application{
         stage.setScene(scene);
         stage.show();
     }
+    private void addFadeMotionToStars(Circle[] stars){
+        for (int i = 0; i < stars.length; ++i){
+            FadeTransition fade = new FadeTransition(Duration.millis(1000), stars[i]);
+            fade.setFromValue(Math.random());
+            fade.setToValue(1.0);
+            fade.setCycleCount(FadeTransition.INDEFINITE);
+            fade.setAutoReverse(true);
+            fade.play();
+        }
+    }
     private void createPathForSolarSystem(Circle[] solarPath){
         int distance = 100;
         for (int i = 0; i < solarPath.length; ++i){
             solarPath[i] = new Circle(500, 350, distance);
             solarPath[i].setFill(null);
             solarPath[i].setStroke(Color.WHITE);
-            solarPath[i].setStrokeWidth(1);
+            solarPath[i].setStrokeWidth(.2);
             distance += 35;
         }
     }
-    private void createMotion(PathTransition pathTransition, Circle planet, Circle path, int duration){
-        pathTransition = new PathTransition();
+    private void createMotion(Circle planet, Circle path, int duration){
+        PathTransition pathTransition = new PathTransition();
         pathTransition.setNode(planet);
         pathTransition.setPath(path);
         pathTransition.setDuration(Duration.millis(duration));
